@@ -573,14 +573,15 @@ function record<T = eventWithTime>(
       );
     };
 
-    iframeManager.addLoadListener((iframeEl) => {
+    const loadListener = (iframeEl: HTMLIFrameElement) => {
       try {
         handlers.push(observe(iframeEl.contentDocument!));
       } catch (error) {
         // TODO: handle internal error
         console.warn(error);
       }
-    });
+    };
+    iframeManager.addLoadListener(loadListener);
 
     const init = () => {
       takeFullSnapshot();
@@ -639,6 +640,7 @@ function record<T = eventWithTime>(
       processedNodeManager.destroy();
       recording = false;
       unregisterErrorHandler();
+      iframeManager.removeLoadListener();
     };
   } catch (error) {
     // TODO: handle internal error
